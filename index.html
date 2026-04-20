@@ -1,563 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PromptForge — AI Prompt Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="PromptForge — Free AI Prompt Generator. Transform any idea into a perfect prompt for ChatGPT, Claude, Gemini, Midjourney and more."/>
+<title>PromptForge — Free AI Prompt Generator</title>
 <style>
-:root{
-  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--surface3:#22222f;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
-  --accent:#7c6aff;--accent2:#b06aff;
-  --text:#f0eff8;--text2:#9897b0;--text3:#5f5e78;
-  --success:#4adf8a;--radius:14px;--radius-sm:8px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+:root{--bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#7c6aff;--accent2:#b06aff;--text:#f0eff8;--text2:#9897b0;--text3:#5f5e78;--radius:14px;--radius-sm:8px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;top:-40%;left:-20%;width:80vw;height:80vw;background:radial-gradient(ellipse,rgba(124,106,255,0.07) 0%,transparent 70%);pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;bottom:-30%;right:-10%;width:60vw;height:60vw;background:radial-gradient(ellipse,rgba(176,106,255,0.05) 0%,transparent 70%);pointer-events:none;z-index:0}
-
-/* HEADER */
-header{position:sticky;top:0;z-index:10;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:blur(12px);background:rgba(10,10,15,0.82)}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.5px;color:var(--text)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.7}
+body::before{content:'';position:fixed;top:-40%;left:-20%;width:80vw;height:80vw;background:radial-gradient(ellipse,rgba(124,106,255,0.06) 0%,transparent 70%);pointer-events:none;z-index:0}
+nav{position:sticky;top:0;z-index:100;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:blur(12px);background:rgba(10,10,15,0.85)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--text);text-decoration:none}
 .logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hbadge{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(124,106,255,0.12);color:var(--accent);border:1px solid rgba(124,106,255,0.28);font-weight:500;letter-spacing:.05em}
-
-/* HERO */
-.hero{position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 1.5rem}
-.hero-tag{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(124,106,255,0.1);border:1px solid rgba(124,106,255,0.25);padding:5px 14px;border-radius:20px;margin-bottom:1.2rem;font-weight:500}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:.9rem}
-.hero h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:15px;color:var(--text2);max-width:500px;margin:0 auto;line-height:1.7;font-weight:300}
-
-/* PLATFORM ROW */
-.platforms{position:relative;z-index:1;display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:1.5rem 0 2rem;padding:0 1rem}
-.picon{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-weight:500}
-.picon .dot{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--surface)}
-
-/* CONTAINER */
-.container{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 1.5rem 4rem}
-
-/* TABS */
-.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:1.25rem}
-.tab-btn{flex:1;padding:9px 12px;border-radius:10px;border:none;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
-.tab-btn.active{background:var(--surface3);color:var(--text)}
-.tab-btn:hover:not(.active){color:var(--text)}
-
-/* CARD */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem}
-.card-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1.1rem}
-
-/* FORM */
-.field{margin-bottom:1.1rem}
-.field:last-child{margin-bottom:0}
-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.02em}
-textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 13px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
-textarea{resize:vertical;min-height:90px;line-height:1.6}
-textarea:focus,select:focus{border-color:rgba(124,106,255,.5);box-shadow:0 0 0 3px rgba(124,106,255,.1)}
-textarea::placeholder{color:var(--text3)}
-select option{background:#1a1a24}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);color:var(--text2);background:transparent;font-family:'DM Sans',sans-serif;transition:all .15s}
-.chip:hover{border-color:rgba(124,106,255,.4);color:var(--text)}
-.chip.on{background:rgba(124,106,255,.15);border-color:rgba(124,106,255,.5);color:#b4aaff}
-
-/* GEN BUTTON */
-.gen-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;cursor:pointer;transition:all .2s;margin-bottom:.5rem}
-.gen-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,106,255,.35)}
-.gen-btn:active{transform:translateY(0)}
-.hint{text-align:center;font-size:11px;color:var(--text3);margin-bottom:.5rem}
-
-/* OUTPUT */
-.output-card{background:var(--surface);border:1px solid rgba(124,106,255,.22);border-radius:var(--radius);padding:1.5rem;margin-top:1rem;display:none;animation:fadeUp .3s ease}
-.output-card.show{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.sec-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:7px}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
-.prompt-text{font-size:13.5px;line-height:1.85;color:var(--text);white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1rem;font-weight:300}
-.action-row{display:flex;gap:7px;margin-bottom:1.25rem;flex-wrap:wrap}
-.action-btn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.action-btn:hover{border-color:rgba(124,106,255,.4);color:var(--text)}
-.action-btn.primary{background:rgba(124,106,255,.12);border-color:rgba(124,106,255,.32);color:#b4aaff}
-.outcomes-list{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:1.25rem}
-.outcomes-list li{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--text2);line-height:1.6}
-.outcomes-list li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
-.tips-list{display:flex;flex-direction:column;gap:7px}
-.tip-item{padding:9px 13px;background:rgba(124,106,255,.07);border-left:2px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:13px;color:var(--text2);line-height:1.6}
-
-/* HISTORY */
-.history-empty{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:14px}
-.history-grid{display:flex;flex-direction:column;gap:8px}
-.history-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.9rem 1.1rem;cursor:pointer;transition:border-color .2s}
-.history-item:hover{border-color:rgba(124,106,255,.35)}
-.history-raw{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.history-meta{display:flex;gap:7px;align-items:center}
-.badge{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(124,106,255,.15);color:#b4aaff;font-weight:500}
-.history-time{font-size:11px;color:var(--text3)}
-
-/* GUIDE */
-.guide-step{display:flex;gap:13px;align-items:flex-start}
-.step-num{width:30px;height:30px;border-radius:50%;background:rgba(124,106,255,.13);border:1px solid rgba(124,106,255,.28);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--accent);flex-shrink:0}
-.step-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
-.step-desc{font-size:13px;color:var(--text2);line-height:1.6}
-
-footer{position:relative;z-index:1;text-align:center;padding:1.75rem 2rem;border-top:1px solid var(--border);color:var(--text3);font-size:12px}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-@media(max-width:580px){.grid-2{grid-template-columns:1fr}.hero h1{font-size:2rem}.platforms{gap:12px}header{padding:0 1rem}.container{padding:0 1rem 3rem}}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;padding:6px 12px;border-radius:var(--radius-sm);transition:all .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2)) !important;color:#fff !important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;flex-direction:column;gap:4px;z-index:99}
+.mobile-menu a{color:var(--text2);text-decoration:none;font-size:14px;padding:10px 0;border-bottom:1px solid var(--border)}
+.mobile-menu.open{display:flex}
+.container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+.grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.btn{display:inline-block;padding:13px 28px;border-radius:var(--radius);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,106,255,.35)}
+.btn-out{display:inline-block;padding:11px 22px;border-radius:var(--radius);border:1px solid var(--border2);color:var(--text2);font-size:13px;font-weight:500;text-decoration:none;transition:all .2s;margin-left:8px}
+.btn-out:hover{border-color:rgba(124,106,255,.4);color:var(--text)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem}
+.stitle{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:.4rem}
+.ssub{font-size:14px;color:var(--text2);margin-bottom:2rem}
+.blog-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-decoration:none;display:block;transition:border-color .2s,transform .2s}
+.blog-card:hover{border-color:rgba(124,106,255,.35);transform:translateY(-2px)}
+.btag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem;display:block}
+.blog-card h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:.4rem;line-height:1.4}
+.blog-card p{font-size:13px;color:var(--text2);line-height:1.6}
+.bmeta{font-size:11px;color:var(--text3);margin-top:.6rem}
+footer{border-top:1px solid var(--border);padding:2.5rem 1.5rem;position:relative;z-index:1}
+.foot-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
+.foot-brand p{font-size:13px;color:var(--text3);line-height:1.6;max-width:240px;margin-top:.5rem}
+.foot-col h4{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem}
+.foot-col a{display:block;font-size:13px;color:var(--text2);text-decoration:none;margin-bottom:.4rem}
+.foot-col a:hover{color:var(--accent)}
+.foot-bottom{max-width:900px;margin:1.5rem auto 0;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text3)}
+@media(max-width:640px){.foot-inner{grid-template-columns:1fr}nav{padding:0 1rem}.nav-links{display:none}.hamburger{display:flex}.container{padding:0 1rem}}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">Prompt<span>Forge</span></div>
-  <span class="hbadge">AI PROMPT ENGINE</span>
-</header>
-
-<div class="hero">
-  <div class="hero-tag">Universal AI Prompt Generator</div>
-  <h1>Turn any idea into a<br/><span class="grad">perfect AI prompt</span></h1>
-  <p>Write in any language — get a precision-crafted prompt for every AI platform on the market.</p>
+<nav>
+  <a href="index.html" class="logo">Prompt<span>Forge</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="tool.html">Tool</a><a href="blog.html">Blog</a><a href="about.html">About</a>
+    <a href="tool.html" class="nav-cta" style="padding:7px 16px;border-radius:8px">Try Free →</a>
+  </div>
+  <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html">Home</a><a href="tool.html">Tool</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a>
 </div>
 
-<div class="platforms">
-  <div class="picon"><div class="dot">🤖</div>ChatGPT</div>
-  <div class="picon"><div class="dot">✦</div>Claude</div>
-  <div class="picon"><div class="dot">💎</div>Gemini</div>
-  <div class="picon"><div class="dot">🎨</div>Midjourney</div>
-  <div class="picon"><div class="dot">🖼</div>DALL·E</div>
-  <div class="picon"><div class="dot">🔍</div>Perplexity</div>
-  <div class="picon"><div class="dot">⚡</div>Grok</div>
+<!-- HERO -->
+<div style="text-align:center;padding:5rem 1.5rem 3rem;position:relative;z-index:1">
+  <div style="display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(124,106,255,0.1);border:1px solid rgba(124,106,255,0.25);padding:5px 14px;border-radius:20px;margin-bottom:1.2rem;font-weight:500">100% Free — No Signup Required</div>
+  <h1 style="font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:1rem">Turn Any Idea Into a<br/><span class="grad">Perfect AI Prompt</span></h1>
+  <p style="font-size:16px;color:var(--text2);max-width:520px;margin:0 auto 2rem;line-height:1.7;font-weight:300">Write in any language — get a precision-crafted prompt for ChatGPT, Claude, Gemini, Midjourney, DALL·E and every major AI platform.</p>
+  <a href="tool.html" class="btn">Generate Your Prompt Free →</a>
+  <a href="blog.html" class="btn-out">Read the Blog</a>
 </div>
 
-<div class="container">
-
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('build',this)">⚡ Build Prompt</button>
-    <button class="tab-btn" onclick="switchTab('history',this)">🕘 History</button>
-    <button class="tab-btn" onclick="switchTab('guide',this)">📖 How to Use</button>
-  </div>
-
-  <!-- BUILD TAB -->
-  <div id="tab-build">
-    <div class="card">
-      <div class="card-title">Your Idea</div>
-      <div class="field">
-        <label>Enter your raw idea or simple prompt (any language — English, Hindi, etc.)</label>
-        <textarea id="raw-prompt" placeholder="e.g. make logo for bakery shop... write email to client... कुछ अच्छा लिखो... create fantasy landscape image... website for restaurant..."></textarea>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Configuration</div>
-      <div class="grid-2" style="margin-bottom:1.1rem">
-        <div class="field" style="margin-bottom:0">
-          <label>Target AI Platform</label>
-          <select id="platform">
-            <option value="universal">Universal (all platforms)</option>
-            <option value="chatgpt">ChatGPT / GPT-4o</option>
-            <option value="claude">Claude (Anthropic)</option>
-            <option value="gemini">Google Gemini</option>
-            <option value="midjourney">Midjourney</option>
-            <option value="dalle">DALL·E 3</option>
-            <option value="stable">Stable Diffusion</option>
-            <option value="perplexity">Perplexity AI</option>
-            <option value="copilot">Microsoft Copilot</option>
-            <option value="grok">Grok (xAI)</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label>Output Type</label>
-          <select id="output-type">
-            <option value="text">Text / Writing</option>
-            <option value="image">Image / Art / Design</option>
-            <option value="code">Code / Development</option>
-            <option value="analysis">Analysis / Research</option>
-            <option value="creative">Creative / Story / Fiction</option>
-            <option value="business">Business / Marketing</option>
-            <option value="education">Education / Explanation</option>
-            <option value="social">Social Media Content</option>
-            <option value="email">Email / Communication</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid-2" style="margin-bottom:1.1rem">
-        <div class="field" style="margin-bottom:0">
-          <label>Detail Level</label>
-          <select id="detail">
-            <option value="brief">Brief (quick result)</option>
-            <option value="standard" selected>Standard</option>
-            <option value="detailed">Detailed</option>
-            <option value="exhaustive">Exhaustive (max quality)</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label>Target Audience</label>
-          <select id="audience">
-            <option value="general">General audience</option>
-            <option value="expert">Domain expert</option>
-            <option value="beginner">Beginner / student</option>
-            <option value="business">Business professional</option>
-            <option value="children">Children / kids</option>
-            <option value="technical">Technical / developer</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>Tone / Style</label>
-        <div class="chips" id="tone-chips">
-          <button class="chip on" data-v="professional">Professional</button>
-          <button class="chip" data-v="casual">Casual</button>
-          <button class="chip" data-v="creative">Creative</button>
-          <button class="chip" data-v="technical">Technical</button>
-          <button class="chip" data-v="persuasive">Persuasive</button>
-          <button class="chip" data-v="formal">Formal</button>
-          <button class="chip" data-v="friendly">Friendly</button>
-          <button class="chip" data-v="concise">Concise</button>
-          <button class="chip" data-v="storytelling">Storytelling</button>
-          <button class="chip" data-v="humorous">Humorous</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Extra context / constraints (optional)</label>
-        <textarea id="extra-ctx" style="min-height:60px" placeholder="e.g. avoid jargon, max 200 words, include call-to-action, reply in Hindi, dark theme, portrait format..."></textarea>
-      </div>
-    </div>
-
-    <button class="gen-btn" id="gen-btn" onclick="generatePrompt()">Generate Optimised Prompt →</button>
-    <p class="hint">Tip: Press Ctrl + Enter to generate quickly</p>
-
-    <div class="output-card" id="output-area">
-      <div class="sec-label">Generated Prompt</div>
-      <div class="prompt-text" id="prompt-out"></div>
-      <div class="action-row">
-        <button class="action-btn primary" onclick="copyPrompt(this)">Copy Prompt</button>
-        <button class="action-btn" onclick="downloadPrompt()">Download .txt</button>
-        <button class="action-btn" onclick="clearOutput()">Clear</button>
-      </div>
-      <div class="sec-label">Expected Outcomes</div>
-      <ul class="outcomes-list" id="outcomes-out"></ul>
-      <div id="tips-area"></div>
+<!-- PLATFORMS -->
+<div style="position:relative;z-index:1;padding:0 0 3rem">
+  <div class="container">
+    <p style="text-align:center;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.25rem">Works with all major AI platforms</p>
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">🤖</div>ChatGPT</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">✦</div>Claude</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">💎</div>Gemini</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">🎨</div>Midjourney</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">🖼</div>DALL·E</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">🔍</div>Perplexity</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--text3)"><div style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--surface)">⚡</div>Grok</div>
     </div>
   </div>
-
-  <!-- HISTORY TAB -->
-  <div id="tab-history" style="display:none">
-    <div class="card">
-      <div class="card-title">Prompt History</div>
-      <div id="history-container">
-        <div class="history-empty">No prompts yet.<br/>Generate your first prompt to see it here.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- GUIDE TAB -->
-  <div id="tab-guide" style="display:none">
-    <div class="card">
-      <div class="card-title">How to Use PromptForge</div>
-      <div style="display:flex;flex-direction:column;gap:1.1rem">
-        <div class="guide-step"><div class="step-num">1</div><div><div class="step-title">Enter your idea in any language</div><div class="step-desc">Type any rough idea in English, Hindi, or any language. PromptForge reads it and rebuilds it into a professional structured prompt.</div></div></div>
-        <div class="guide-step"><div class="step-num">2</div><div><div class="step-title">Select your target AI platform</div><div class="step-desc">Each AI responds better to different prompt styles. Choose your platform for a tailored result, or pick "Universal" to use the prompt anywhere.</div></div></div>
-        <div class="guide-step"><div class="step-num">3</div><div><div class="step-title">Set tone, type, detail and audience</div><div class="step-desc">These settings shape the prompt's structure, vocabulary, and depth. Use the Extra context box to add word limits, language preferences, or things to avoid.</div></div></div>
-        <div class="guide-step"><div class="step-num">4</div><div><div class="step-title">Copy and paste into any AI</div><div class="step-desc">Click Copy Prompt and paste it into ChatGPT, Claude, Gemini, Midjourney, or any AI. The prompt includes Role, Task, Context, Format and Constraints for perfect results.</div></div></div>
-      </div>
-    </div>
-    <div class="card" style="margin-top:0">
-      <div class="card-title">Tips for Best Results</div>
-      <div class="tips-list">
-        <div class="tip-item">Be as specific as possible in your idea — even rough details help PromptForge build a far better prompt.</div>
-        <div class="tip-item">For image generation (Midjourney, DALL·E), select "Image / Art" as the output type to get prompts with aspect ratios, lighting, and style parameters.</div>
-        <div class="tip-item">Use the Extra context field to specify language of output, things to avoid, word count limits, or any specific reference style.</div>
-        <div class="tip-item">Check the Expected Outcomes section — it tells you exactly what to expect when you run the prompt in your chosen AI platform.</div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<footer>PromptForge &nbsp;·&nbsp; AI Prompt Generator &nbsp;·&nbsp; Works with all major AI platforms &nbsp;·&nbsp; Supports any input language</footer>
+<!-- FEATURES -->
+<div style="position:relative;z-index:1;padding:3rem 0">
+  <div class="container">
+    <h2 class="stitle" style="text-align:center">Why Use PromptForge?</h2>
+    <p class="ssub" style="text-align:center">Stop getting bad results from AI. Get a perfect prompt every single time.</p>
+    <div class="grid">
+      <div class="card"><div style="font-size:24px;margin-bottom:.75rem">🌐</div><h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Any Language</h3><p style="font-size:13px;color:var(--text2)">Type in Hindi, English or any language. PromptForge understands and builds the prompt for you.</p></div>
+      <div class="card"><div style="font-size:24px;margin-bottom:.75rem">🎯</div><h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Platform Specific</h3><p style="font-size:13px;color:var(--text2)">Each AI is different. We optimise your prompt specifically for ChatGPT, Claude, Midjourney and more.</p></div>
+      <div class="card"><div style="font-size:24px;margin-bottom:.75rem">⚡</div><h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Instant Results</h3><p style="font-size:13px;color:var(--text2)">No waiting, no signup. Enter your idea and get a professional prompt in seconds.</p></div>
+      <div class="card"><div style="font-size:24px;margin-bottom:.75rem">📋</div><h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Structured Format</h3><p style="font-size:13px;color:var(--text2)">Every prompt includes Role, Task, Context, Format and Constraints — the proven formula for AI success.</p></div>
+      <div class="card"><div style="font-size:24px;margin-bottom:.75rem">🆓</div><h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">100% Free</h3><p style="font-size:13px;color:var(--text2)">Completely free to use. No hidden charges, no credit card, no subscription ever.</p></div>
+      <div class="card"><div style="font-size:24px;margin-bottom:.75rem">📱</div><h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Works Everywhere</h3><p style="font-size:13px;color:var(--text2)">Phone, tablet or computer. No app download needed — works in your browser.</p></div>
+    </div>
+  </div>
+</div>
 
-<script>
-/* ============================================================
-   PROMPT ENGINEERING ENGINE — no API needed, runs 100% offline
-   ============================================================ */
+<!-- HOW IT WORKS -->
+<div style="position:relative;z-index:1;padding:3rem 0">
+  <div class="container">
+    <h2 class="stitle" style="text-align:center">How It Works</h2>
+    <p class="ssub" style="text-align:center">3 simple steps to a perfect AI prompt</p>
+    <div class="grid">
+      <div class="card" style="text-align:center">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(124,106,255,.15);border:1px solid rgba(124,106,255,.3);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--accent);margin:0 auto 1rem">1</div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Enter Your Idea</h3>
+        <p style="font-size:13px;color:var(--text2)">Type anything in any language. No need to be perfect — just say what you want.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(124,106,255,.15);border:1px solid rgba(124,106,255,.3);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--accent);margin:0 auto 1rem">2</div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Choose Your Platform</h3>
+        <p style="font-size:13px;color:var(--text2)">Select ChatGPT, Claude, Gemini, Midjourney and more. Each prompt is tailored.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(124,106,255,.15);border:1px solid rgba(124,106,255,.3);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--accent);margin:0 auto 1rem">3</div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:.4rem">Copy and Use</h3>
+        <p style="font-size:13px;color:var(--text2)">Get your optimised prompt instantly. Copy and paste into any AI for perfect results.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2rem"><a href="tool.html" class="btn">Try It Now — It's Free →</a></div>
+  </div>
+</div>
 
-const promptHistory = [];
+<!-- BLOG PREVIEW -->
+<div style="position:relative;z-index:1;padding:3rem 0">
+  <div class="container">
+    <h2 class="stitle">Latest from the Blog</h2>
+    <p class="ssub">Learn how to get better results from every AI platform</p>
+    <div class="grid3">
+      <a href="blog-what-is-prompt-engineering.html" class="blog-card"><span class="btag">Beginner Guide</span><h3>What is Prompt Engineering and Why Does It Matter?</h3><p>Learn how the art of writing better prompts can completely transform your AI results.</p><div class="bmeta">5 min read · April 2025</div></a>
+      <a href="blog-chatgpt-prompts.html" class="blog-card"><span class="btag">ChatGPT</span><h3>10 Best ChatGPT Prompt Tips to Get Perfect Results Every Time</h3><p>Stop getting generic answers. These proven techniques will make ChatGPT work exactly how you want.</p><div class="bmeta">7 min read · April 2025</div></a>
+      <a href="blog-midjourney-prompts.html" class="blog-card"><span class="btag">Image AI</span><h3>How to Write Midjourney Prompts for Stunning AI Art</h3><p>A complete guide to Midjourney prompt structure, style parameters and lighting techniques.</p><div class="bmeta">6 min read · April 2025</div></a>
+    </div>
+    <div style="text-align:center;margin-top:2rem"><a href="blog.html" class="btn-out">View All Articles →</a></div>
+  </div>
+</div>
 
-// Chip toggle
-document.querySelectorAll('#tone-chips .chip').forEach(c => {
-  c.addEventListener('click', () => {
-    document.querySelectorAll('#tone-chips .chip').forEach(x => x.classList.remove('on'));
-    c.classList.add('on');
-  });
-});
+<!-- CTA -->
+<div style="position:relative;z-index:1;padding:2rem 0 5rem">
+  <div class="container">
+    <div class="card" style="text-align:center;padding:3rem;border-color:rgba(124,106,255,.25)">
+      <h2 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:.75rem">Ready to get better AI results?</h2>
+      <p style="color:var(--text2);margin-bottom:1.5rem;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.7">Join thousands of users already using PromptForge to get perfect results from every AI platform — completely free.</p>
+      <a href="tool.html" class="btn">Start Generating Prompts Free →</a>
+    </div>
+  </div>
+</div>
 
-// Tab switch
-function switchTab(name, el) {
-  ['build','history','guide'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t === name ? 'block' : 'none';
-  });
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  if (name === 'history') renderHistory();
-}
-
-// ---- PLATFORM DATA ----
-const platformTips = {
-  universal: ["Start the prompt with a clear role (e.g. 'You are an expert...') for best results on any platform.", "This prompt is structured to work on ChatGPT, Claude, Gemini, Copilot and most LLMs without modification."],
-  chatgpt:   ["In ChatGPT, use the Custom Instructions section to set your persona once so you don't repeat it every time.", "GPT-4o responds well to step-by-step breakdown requests — add 'Think step by step' at the end for complex tasks."],
-  claude:    ["Claude responds especially well to XML-structured prompts — wrapping context in <context></context> tags improves output quality.", "Claude follows nuanced instructions precisely, so feel free to add detailed constraints and it will respect them."],
-  gemini:    ["Gemini works best with Google Workspace tasks — specify the format (Docs, Sheets, Slides) if relevant.", "For complex prompts, break your request into numbered steps to help Gemini follow each instruction clearly."],
-  midjourney:["Append style parameters at the end: --ar 16:9 for widescreen, --v 6 for latest model, --style raw for photorealism.", "Midjourney responds strongly to comma-separated visual descriptors — lighting, mood, camera type, and art style all boost quality."],
-  dalle:     ["DALL·E 3 supports natural language well — be descriptive about lighting, mood, composition, and color palette.", "Specify the image dimensions by including 'landscape', 'portrait', or 'square format' in your prompt."],
-  stable:    ["For Stable Diffusion, add a negative prompt to exclude unwanted elements (e.g. blurry, low quality, watermark).", "Append quality boosters like: masterpiece, best quality, ultra-detailed, 8k resolution, sharp focus."],
-  perplexity:["Perplexity is optimised for research — ask it to cite sources or compare multiple viewpoints for richer results.", "Add 'with recent sources' or 'as of 2025' to ensure Perplexity pulls up-to-date information from the web."],
-  copilot:   ["Microsoft Copilot integrates with Office — specify the output format (Word document, Excel table, PowerPoint slide) for direct use.", "Copilot works best with business context — mention your industry, company size, or goal for tailored results."],
-  grok:      ["Grok excels at real-time information — ask it to reference recent news or X/Twitter trends for current insights.", "Grok handles casual, conversational prompts well — you can be less formal and still get high-quality responses."],
-};
-
-const platformIntros = {
-  universal:  "You are a [ROLE]. Your task is to",
-  chatgpt:    "Act as a [ROLE]. I need you to",
-  claude:     "You are an expert [ROLE]. Please",
-  gemini:     "As a knowledgeable [ROLE], your task is to",
-  midjourney: "",
-  dalle:      "",
-  stable:     "",
-  perplexity: "Research and provide a comprehensive answer as a [ROLE]. Specifically,",
-  copilot:    "As a professional [ROLE] assistant, help me to",
-  grok:       "You are a [ROLE]. In a clear and direct way,",
-};
-
-const roleMap = {
-  text:      "professional writer and content creator",
-  image:     "creative visual artist and art director",
-  code:      "senior software engineer and developer",
-  analysis:  "data analyst and research expert",
-  creative:  "creative writer and storyteller",
-  business:  "business strategist and marketing expert",
-  education: "experienced teacher and educator",
-  social:    "social media strategist and content creator",
-  email:     "professional communication specialist",
-};
-
-const formatGuide = {
-  text:      "Format: Well-structured paragraphs with a clear introduction, body, and conclusion.",
-  image:     "Format: A detailed visual description including subject, style, lighting, mood, color palette, and composition.",
-  code:      "Format: Clean, commented code with explanations. Include usage examples.",
-  analysis:  "Format: Structured report with executive summary, key findings, and actionable insights.",
-  creative:  "Format: Narrative prose with vivid description, character depth, and engaging pacing.",
-  business:  "Format: Professional document with clear sections, bullet points for key data, and a strong call-to-action.",
-  education: "Format: Clear explanation using simple language, examples, and a summary at the end.",
-  social:    "Format: Punchy, engaging copy optimised for the platform. Include hashtag suggestions.",
-  email:     "Format: Professional email with subject line suggestion, greeting, body, and closing.",
-};
-
-const detailInstructions = {
-  brief:      "Keep the output concise and to the point.",
-  standard:   "Provide a complete and well-rounded response.",
-  detailed:   "Be thorough — cover all important aspects in depth.",
-  exhaustive: "Be comprehensive and exhaustive. Cover every angle, edge case, and nuance in maximum detail.",
-};
-
-const audienceInstructions = {
-  general:   "Write for a general audience — no assumed background knowledge.",
-  expert:    "Write for a domain expert — use technical terminology and assume deep prior knowledge.",
-  beginner:  "Write for a beginner — use simple language, avoid jargon, and explain concepts clearly.",
-  business:  "Write for a business professional — focus on ROI, efficiency, and practical application.",
-  children:  "Write for children — use simple words, fun examples, and an engaging, friendly tone.",
-  technical: "Write for a technical developer audience — include specifics, edge cases, and technical precision.",
-};
-
-const toneInstructions = {
-  professional: "Maintain a professional and polished tone throughout.",
-  casual:       "Use a conversational, relaxed, and approachable tone.",
-  creative:     "Be imaginative, expressive, and think outside the box.",
-  technical:    "Use precise technical language and a logical, structured approach.",
-  persuasive:   "Be compelling and persuasive — guide the reader toward a clear conclusion or action.",
-  formal:       "Use formal language suitable for official documents or academic contexts.",
-  friendly:     "Be warm, welcoming, and friendly — make the reader feel at ease.",
-  concise:      "Be brief and direct — eliminate all unnecessary words.",
-  storytelling: "Use narrative storytelling techniques to make the content engaging and memorable.",
-  humorous:     "Incorporate appropriate humour and wit to make the content enjoyable.",
-};
-
-// Image-specific platforms
-const imagePromptTemplate = (idea, tone, detail, extra) => {
-  const lighting = ["cinematic lighting","soft natural light","dramatic side lighting","golden hour lighting","studio lighting","neon lighting"][Math.floor(Math.random()*6)];
-  const quality = detail === 'exhaustive' ? "masterpiece, ultra-detailed, 8k resolution, sharp focus, professional photography" :
-                  detail === 'detailed'   ? "highly detailed, high resolution, sharp focus" :
-                  detail === 'brief'      ? "clean, high quality" : "detailed, high quality";
-  let prompt = `${idea}, ${tone} style, ${lighting}, ${quality}, vibrant colors, professional composition`;
-  if (extra) prompt += `, ${extra}`;
-  return prompt;
-};
-
-const imageOutcomes = platform => [
-  `A visually striking image matching your described concept and style`,
-  `Consistent lighting and mood aligned with the chosen tone`,
-  `High-resolution output suitable for use in designs, presentations, or social media`,
-  platform === 'midjourney' ? `Use --ar 16:9 for widescreen or --ar 1:1 for square social posts` : `Professional composition ready for direct use`,
-  `Repeatable results — you can iterate by modifying style or lighting descriptors`,
-];
-
-// Main text prompt builder
-function buildTextPrompt(idea, platform, outType, tone, detail, audience, extra) {
-  const role = roleMap[outType] || "expert assistant";
-  const intro = (platformIntros[platform] || platformIntros.universal).replace('[ROLE]', role);
-  const fmt = formatGuide[outType] || "";
-  const det = detailInstructions[detail] || "";
-  const aud = audienceInstructions[audience] || "";
-  const ton = toneInstructions[tone] || "";
-
-  let prompt = `${intro} ${idea}.\n\n`;
-  prompt += `Role: You are a ${role}.\n\n`;
-  prompt += `Task: ${idea}\n\n`;
-  prompt += `Context:\n`;
-  prompt += `• Audience: ${aud}\n`;
-  prompt += `• Tone: ${ton}\n`;
-  prompt += `• Detail: ${det}\n`;
-  if (extra) prompt += `• Additional constraints: ${extra}\n`;
-  prompt += `\n${fmt}\n\n`;
-  prompt += `Constraints:\n`;
-  prompt += `• Ensure accuracy and relevance to the task.\n`;
-  prompt += `• Avoid filler content — every sentence should add value.\n`;
-  if (audience === 'beginner' || audience === 'children') prompt += `• Use simple, accessible language throughout.\n`;
-  if (tone === 'persuasive') prompt += `• End with a clear and compelling call-to-action.\n`;
-  if (detail === 'brief') prompt += `• Keep the total response under 150 words.\n`;
-  if (detail === 'exhaustive') prompt += `• Produce a thorough, long-form response covering all angles.\n`;
-  prompt += `\nBegin your response directly — no preamble or meta-commentary.`;
-  return prompt.trim();
-}
-
-function buildOutcomes(outType, detail, platform) {
-  const base = {
-    text:      ["A well-structured, readable piece of content that directly addresses your topic","Clear and engaging writing aligned with your chosen tone and audience","A response ready to use or publish with minimal editing needed","Content structured with logical flow — intro, body, conclusion","Consistent voice and style maintained throughout the entire output"],
-    image:     imageOutcomes(platform),
-    code:      ["Working, clean code that solves your stated problem","Commented code with explanations so you understand every part","Usage examples included so you can implement it immediately","Edge cases and error handling considered in the implementation","A solution that follows best practices for the chosen language or framework"],
-    analysis:  ["A structured, data-driven analysis of your topic with clear findings","Key insights presented in order of importance and impact","Actionable recommendations based on the analysis","A balanced view covering multiple perspectives or scenarios","A professional-grade output suitable for reports or presentations"],
-    creative:  ["An engaging narrative or creative piece with vivid, immersive writing","Strong character, setting, or concept development as requested","A memorable opening that hooks the reader immediately","Consistent tone and pacing maintained throughout the piece","A satisfying resolution or conclusion that ties everything together"],
-    business:  ["A professional business document or marketing copy ready to use","Clear value proposition communicated to your target audience","Persuasive language with a strong call-to-action included","Data points and benefits structured for maximum impact","Content aligned with professional business communication standards"],
-    education: ["A clear, easy-to-understand explanation of your topic","Step-by-step breakdown that makes complex ideas simple","Real-world examples used to make concepts relatable and memorable","A summary at the end reinforcing the key takeaways","Language matched perfectly to your stated audience level"],
-    social:    ["Engaging social media content designed to drive interaction and sharing","Platform-appropriate length and formatting for maximum reach","Punchy, attention-grabbing opening line to stop the scroll","Relevant hashtag suggestions included for discoverability","A clear message or story told in a concise, shareable format"],
-    email:     ["A professionally written email ready to send","Clear subject line suggestion to maximise open rates","Polite, direct opening that states the purpose immediately","Appropriate tone for your business or personal context","A clear, actionable closing that tells the recipient exactly what to do next"],
-  };
-  return (base[outType] || base.text);
-}
-
-// MAIN GENERATE FUNCTION
-function generatePrompt() {
-  const raw = document.getElementById('raw-prompt').value.trim();
-  if (!raw) { alert('Please enter your idea first.'); return; }
-
-  const platform  = document.getElementById('platform').value;
-  const outType   = document.getElementById('output-type').value;
-  const tone      = document.querySelector('#tone-chips .chip.on')?.dataset.v || 'professional';
-  const detail    = document.getElementById('detail').value;
-  const audience  = document.getElementById('audience').value;
-  const extra     = document.getElementById('extra-ctx').value.trim();
-
-  // Build prompt
-  let finalPrompt;
-  if (['midjourney','dalle','stable'].includes(platform) || outType === 'image') {
-    finalPrompt = imagePromptTemplate(raw, tone, detail, extra);
-  } else {
-    finalPrompt = buildTextPrompt(raw, platform, outType, tone, detail, audience, extra);
-  }
-
-  // Outcomes
-  const outcomes = buildOutcomes(outType, detail, platform);
-
-  // Tips
-  const tips = platformTips[platform] || platformTips.universal;
-
-  // Render
-  document.getElementById('prompt-out').textContent = finalPrompt;
-  document.getElementById('outcomes-out').innerHTML = outcomes.map(o => `<li>${escHtml(o)}</li>`).join('');
-
-  const tipsEl = document.getElementById('tips-area');
-  tipsEl.innerHTML = `<div class="sec-label" style="margin-top:1.1rem">Platform Tips</div><div class="tips-list">` +
-    tips.map(t => `<div class="tip-item">${escHtml(t)}</div>`).join('') + `</div>`;
-
-  document.getElementById('output-area').classList.add('show');
-
-  promptHistory.push({
-    raw, platform, outType, tone,
-    prompt: finalPrompt,
-    outcomes,
-    time: new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })
-  });
-}
-
-function copyPrompt(btn) {
-  const t = document.getElementById('prompt-out').textContent;
-  navigator.clipboard.writeText(t).then(() => {
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy Prompt', 1800);
-  }).catch(() => {
-    // fallback
-    const ta = document.createElement('textarea');
-    ta.value = t; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy Prompt', 1800);
-  });
-}
-
-function downloadPrompt() {
-  const t = document.getElementById('prompt-out').textContent;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([t], { type:'text/plain' }));
-  a.download = 'promptforge-prompt.txt';
-  a.click();
-}
-
-function clearOutput() {
-  document.getElementById('output-area').classList.remove('show');
-}
-
-function renderHistory() {
-  const el = document.getElementById('history-container');
-  if (!promptHistory.length) {
-    el.innerHTML = '<div class="history-empty">No prompts yet.<br/>Generate your first prompt to see it here.</div>';
-    return;
-  }
-  el.innerHTML = '<div class="history-grid">' +
-    promptHistory.slice().reverse().map((h, i) => `
-      <div class="history-item" onclick="loadHistory(${promptHistory.length - 1 - i})">
-        <div class="history-raw">${escHtml(h.raw)}</div>
-        <div class="history-meta">
-          <span class="badge">${h.platform}</span>
-          <span class="badge" style="background:rgba(176,106,255,.13);color:#c4a4ff">${h.outType}</span>
-          <span class="history-time">${h.time}</span>
-        </div>
-      </div>`).join('') + '</div>';
-}
-
-function loadHistory(i) {
-  const h = promptHistory[i];
-  document.getElementById('raw-prompt').value = h.raw;
-  document.getElementById('prompt-out').textContent = h.prompt;
-  document.getElementById('outcomes-out').innerHTML = (h.outcomes || []).map(o => `<li>${escHtml(o)}</li>`).join('');
-  document.getElementById('tips-area').innerHTML = '';
-  document.getElementById('output-area').classList.add('show');
-  switchTab('build');
-  document.querySelectorAll('.tab-btn')[0].classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach((b, idx) => { if (idx > 0) b.classList.remove('active'); });
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// Keyboard shortcut
-document.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.key === 'Enter') generatePrompt();
-});
-</script>
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand"><a href="index.html" class="logo">Prompt<span>Forge</span></a><p>Free AI prompt generator that transforms any idea into a perfect prompt for every AI platform.</p></div>
+    <div class="foot-col"><h4>Pages</h4><a href="index.html">Home</a><a href="tool.html">The Tool</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="privacy.html">Privacy Policy</a></div>
+    <div class="foot-col"><h4>Blog</h4><a href="blog-what-is-prompt-engineering.html">Prompt Engineering</a><a href="blog-chatgpt-prompts.html">ChatGPT Tips</a><a href="blog-midjourney-prompts.html">Midjourney Guide</a><a href="blog.html">All Articles</a></div>
+  </div>
+  <div class="foot-bottom">© 2025 PromptForge · Built by Raj Mishra · <a href="privacy.html" style="color:var(--text3);text-decoration:none">Privacy Policy</a></div>
+</footer>
+<script>function toggleMenu(){document.getElementById("mobile-menu").classList.toggle("open")}</script>
 </body>
 </html>
